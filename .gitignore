@@ -1,0 +1,10 @@
+.env
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+backup-artifacts/
+__pycache__/
+.pytest_cache/
+
