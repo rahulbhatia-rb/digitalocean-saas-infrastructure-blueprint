@@ -1,0 +1,25 @@
+name: Detect infrastructure drift
+
+on:
+  schedule:
+    - cron: "17 5 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [test, staging, production]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform -chdir=infra init
+      - name: Plan only; never apply
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+        run: terraform -chdir=infra plan -detailed-exitcode -var-file=../environments/${{ matrix.environment }}/terraform.tfvars
+
